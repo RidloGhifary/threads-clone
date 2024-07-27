@@ -6,6 +6,7 @@ import bcrypt from "bcryptjs";
 import { db } from "@/lib/db";
 import { RegisterSchema } from "@/schemas";
 import { getUserByEmail } from "@/data/users";
+import { sendVerificationEmail } from "@/lib/mail";
 
 export default async function register(values: z.infer<typeof RegisterSchema>) {
   const validatedFields = RegisterSchema.safeParse(values);
@@ -21,7 +22,16 @@ export default async function register(values: z.infer<typeof RegisterSchema>) {
     return { error: "User already exist!" };
   }
 
-  await db.user.create({
+  const emailToken = await bcrypt.hash(email, 5);
+  const generateOtpCode = Math.floor(100000 + Math.random() * 900000);
+
+  await sendVerificationEmail({
+    email,
+    token: emailToken,
+    otpCode: generateOtpCode.toString(),
+  });
+
+  const user = await db.user.create({
     data: {
       username,
       nickname: email.split("@")[0],
@@ -30,6 +40,13 @@ export default async function register(values: z.infer<typeof RegisterSchema>) {
       is_confirmed: false,
       email,
       password: hashedPassword,
+    },
+  });
+
+  await db.otpCode.create({
+    data: {
+      user_id: user.id,
+      otp_code: generateOtpCode.toString(),
     },
   });
 

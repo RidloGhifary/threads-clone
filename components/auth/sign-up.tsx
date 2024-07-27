@@ -3,13 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import {
-  useQuery,
-  useMutation,
-  useQueryClient,
-  QueryClient,
-  QueryClientProvider,
-} from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 
 import {
@@ -24,6 +18,7 @@ import {
 import { Input } from "@/components/ui/input";
 import ButtonSubmit from "./button-submit";
 import register from "@/actions/auth/register";
+import { useToast } from "@/components/ui/use-toast";
 
 const formSchema = z
   .object({
@@ -52,6 +47,7 @@ const formSchema = z
 
 export default function SignUpForm() {
   const queryClient = useQueryClient();
+  const { toast } = useToast();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -65,11 +61,27 @@ export default function SignUpForm() {
   const mutation = useMutation({
     mutationFn: register,
     onSuccess: (data) => {
-      console.log("🚀 ~ SignUpForm ~ data:", data);
+      if (data.error) {
+        toast({
+          variant: "destructive",
+          title: "Account created failed.",
+          description: data.error,
+        });
+        return;
+      }
+
       queryClient.invalidateQueries({ queryKey: ["todos"] });
+      toast({
+        title: "Account created.",
+        description: data.success,
+      });
     },
     onError: (error) => {
-      console.log("🚀 ~ SignUpForm ~ error:", error);
+      toast({
+        variant: "destructive",
+        title: "Account created failed.",
+        description: error.message,
+      });
     },
   });
 
@@ -82,7 +94,7 @@ export default function SignUpForm() {
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="mx-auto space-y-3 sm:w-[80%]"
+          className="mx-auto space-y-3 disabled:cursor-not-allowed disabled:opacity-50 sm:w-[80%]"
         >
           <FormField
             control={form.control}
@@ -94,7 +106,12 @@ export default function SignUpForm() {
                   <FormMessage className="text-sm text-destructive" />
                 </div>
                 <FormControl>
-                  <Input placeholder="johndoe" {...field} />
+                  <Input
+                    placeholder="johndoe"
+                    {...field}
+                    disabled={mutation.isPending}
+                    className="disabled:cursor-not-allowed disabled:opacity-50"
+                  />
                 </FormControl>
                 <FormDescription>
                   This is your public display name.
@@ -116,6 +133,8 @@ export default function SignUpForm() {
                     type="email"
                     placeholder="johndoe@gmail.com"
                     {...field}
+                    disabled={mutation.isPending}
+                    className="disabled:cursor-not-allowed disabled:opacity-50"
                   />
                 </FormControl>
                 <FormDescription>
@@ -134,7 +153,13 @@ export default function SignUpForm() {
                   <FormMessage className="text-sm text-destructive" />
                 </div>
                 <FormControl>
-                  <Input type="password" placeholder="********" {...field} />
+                  <Input
+                    type="password"
+                    placeholder="********"
+                    {...field}
+                    disabled={mutation.isPending}
+                    className="disabled:cursor-not-allowed disabled:opacity-50"
+                  />
                 </FormControl>
                 <FormDescription>
                   Password you want to use for your account.
@@ -142,7 +167,9 @@ export default function SignUpForm() {
               </FormItem>
             )}
           />
-          <ButtonSubmit>Sign up</ButtonSubmit>
+          <ButtonSubmit isDisabled={mutation.isPending}>
+            {mutation.isPending ? "Loading..." : "Sign up"}
+          </ButtonSubmit>
           <p className="text-center text-sm">
             Already have an account?{" "}
             <Link href="/sign-in" className="text-link underline">
