@@ -3,8 +3,15 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import {
+  useQuery,
+  useMutation,
+  useQueryClient,
+  QueryClient,
+  QueryClientProvider,
+} from "@tanstack/react-query";
+import Link from "next/link";
 
-import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -15,8 +22,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import Link from "next/link";
 import ButtonSubmit from "./button-submit";
+import register from "@/actions/auth/register";
 
 const formSchema = z
   .object({
@@ -44,6 +51,8 @@ const formSchema = z
   );
 
 export default function SignUpForm() {
+  const queryClient = useQueryClient();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -53,10 +62,19 @@ export default function SignUpForm() {
     },
   });
 
+  const mutation = useMutation({
+    mutationFn: register,
+    onSuccess: (data) => {
+      console.log("🚀 ~ SignUpForm ~ data:", data);
+      queryClient.invalidateQueries({ queryKey: ["todos"] });
+    },
+    onError: (error) => {
+      console.log("🚀 ~ SignUpForm ~ error:", error);
+    },
+  });
+
   function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values);
+    mutation.mutate(values);
   }
 
   return (
