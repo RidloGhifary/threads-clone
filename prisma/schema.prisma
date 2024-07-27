@@ -1,0 +1,161 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                 String             @id @default(cuid())
+  username           String             @db.VarChar(50)
+  nickname           String
+  email              String
+  password           String
+  bio                String?            @db.VarChar(255)
+  profile_picture    String?
+  is_confirmed       Boolean
+  created_at         DateTime           @default(now())
+  updated_at         DateTime           @updatedAt
+  otpCodes           OtpCode[]
+  posts              Post[]
+  followers          Follower[]         @relation("UserFollowers")
+  following          Following[]        @relation("UserFollowing")
+  likedPosts         Like[]             @relation("PostLikes")
+  comments           Comment[]          @relation("PostComments")
+  replies            ReplyComment[]     @relation("CommentReplies")
+  likedComments      LikeComment[]      @relation("CommentLikes")
+  likedReplyComments LikeReplyComment[] @relation("ReplyCommentLikes")
+
+  @@unique([username, email])
+  @@map("users")
+}
+
+model OtpCode {
+  id         String   @id @default(cuid())
+  user_id    String
+  user       User     @relation(fields: [user_id], references: [id])
+  otp_code   String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@unique([user_id, otp_code])
+  @@index([user_id])
+  @@index([otp_code])
+  @@map("otpcodes")
+}
+
+model Follower {
+  id       String @id @default(cuid())
+  user_id  String
+  follower User   @relation("UserFollowers", fields: [user_id], references: [id])
+
+  @@index([user_id])
+  @@map("followers")
+}
+
+model Following {
+  id        String @id @default(cuid())
+  user_id   String
+  following User   @relation("UserFollowing", fields: [user_id], references: [id])
+
+  @@index([user_id])
+  @@map("following")
+}
+
+model Post {
+  id         String         @id @default(cuid())
+  content    String
+  is_edited  Boolean
+  user_id    String
+  user       User           @relation(fields: [user_id], references: [id])
+  created_at DateTime       @default(now())
+  updated_at DateTime       @updatedAt
+  likes      Like[]         @relation("PostLikes")
+  comments   Comment[]      @relation("PostComments")
+  replies    ReplyComment[] @relation("CommentReplies")
+
+  @@index([user_id])
+  @@map("posts")
+}
+
+model Like {
+  id      String @id @default(cuid())
+  user_id String
+  post_id String
+  user    User   @relation("PostLikes", fields: [user_id], references: [id])
+  post    Post   @relation("PostLikes", fields: [post_id], references: [id])
+
+  @@index([user_id])
+  @@index([post_id])
+  @@map("likes")
+}
+
+model Comment {
+  id             String         @id @default(cuid())
+  content        String
+  post_id        String
+  user_id        String
+  user           User           @relation("PostComments", fields: [user_id], references: [id])
+  post           Post           @relation("PostComments", fields: [post_id], references: [id])
+  created_at     DateTime       @default(now())
+  updated_at     DateTime       @updatedAt
+  replies        ReplyComment[] @relation("CommentReplies")
+  liked_comments LikeComment[]  @relation("CommentLikes")
+
+  @@index([post_id])
+  @@index([user_id])
+  @@map("comments")
+}
+
+model ReplyComment {
+  id                   String             @id @default(cuid())
+  content              String
+  post_id              String
+  user_id              String
+  comment_id           String
+  user                 User               @relation("CommentReplies", fields: [user_id], references: [id])
+  post                 Post               @relation("CommentReplies", fields: [post_id], references: [id])
+  comment              Comment            @relation("CommentReplies", fields: [comment_id], references: [id])
+  liked_reply_comments LikeReplyComment[] @relation("ReplyCommentLikes")
+  created_at           DateTime           @default(now())
+  updated_at           DateTime           @updatedAt
+
+  @@index([post_id])
+  @@index([user_id])
+  @@index([comment_id])
+  @@map("replyComments")
+}
+
+model LikeComment {
+  id         String  @id @default(cuid())
+  comment_id String
+  user_id    String
+  user       User    @relation("CommentLikes", fields: [user_id], references: [id])
+  comment    Comment @relation("CommentLikes", fields: [comment_id], references: [id])
+
+  @@index([comment_id])
+  @@index([user_id])
+  @@map("likeComments")
+}
+
+model LikeReplyComment {
+  id               String       @id @default(cuid())
+  reply_comment_id String
+  user_id          String
+  reply_comment    ReplyComment @relation("ReplyCommentLikes", fields: [reply_comment_id], references: [id])
+  user             User         @relation("ReplyCommentLikes", fields: [user_id], references: [id])
+  created_at       DateTime     @default(now())
+  updated_at       DateTime     @updatedAt
+
+  @@index([reply_comment_id])
+  @@index([user_id])
+  @@map("likeReplyComments")
+}
