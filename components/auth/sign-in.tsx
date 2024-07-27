@@ -4,7 +4,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -16,6 +15,8 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
+
+import ButtonSubmit from "./button-submit";
 
 const formSchema = z.object({
   email: z.string().email({ message: "Not valid email." }).trim(),
@@ -84,12 +85,7 @@ export default function SignInForm() {
               </FormItem>
             )}
           />
-          <Button
-            type="submit"
-            className="w-full bg-white text-black hover:bg-white/80 md:w-fit"
-          >
-            Sign in
-          </Button>
+          <ButtonSubmit>Sign in</ButtonSubmit>
           <p className="text-center text-sm">
             Have not an account?{" "}
             <Link href="/sign-up" className="text-link underline">

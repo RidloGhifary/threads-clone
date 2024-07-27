@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
+import ButtonSubmit from "./button-submit";
 
 const formSchema = z.object({
   username: z
@@ -110,12 +111,7 @@ export default function SignUpForm() {
               </FormItem>
             )}
           />
-          <Button
-            type="submit"
-            className="w-full bg-white text-black hover:bg-white/80 md:w-fit"
-          >
-            Sign up
-          </Button>
+          <ButtonSubmit>Sign up</ButtonSubmit>
           <p className="text-center text-sm">
             Already have an account?{" "}
             <Link href="/sign-in" className="text-link underline">
