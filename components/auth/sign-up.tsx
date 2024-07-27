@@ -18,17 +18,30 @@ import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import ButtonSubmit from "./button-submit";
 
-const formSchema = z.object({
-  username: z
-    .string()
-    .min(2, {
-      message: "Min 2 characters.",
-    })
-    .max(32, { message: "Max 32 characters." })
-    .trim(),
-  email: z.string().email({ message: "Not valid email." }).trim(),
-  password: z.string().min(8, { message: "Min 8 characters." }),
-});
+const formSchema = z
+  .object({
+    username: z
+      .string()
+      .min(2, {
+        message: "Min 2 characters.",
+      })
+      .max(32, { message: "Max 32 characters." })
+      .trim(),
+    email: z.string().email({ message: "Not valid email." }).trim(),
+    password: z.string().min(8, { message: "Min 8 characters." }),
+  })
+  .refine(
+    (data) => {
+      if (/^[a-z0-9_]+$/.test(data.username)) {
+        return true;
+      }
+
+      return false;
+    },
+    {
+      message: "Cannot contain special characters.",
+    },
+  );
 
 export default function SignUpForm() {
   const form = useForm<z.infer<typeof formSchema>>({
