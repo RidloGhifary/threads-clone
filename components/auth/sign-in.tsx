@@ -3,6 +3,8 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useRouter, useSearchParams } from "next/navigation";
 
 import {
   Form,
@@ -15,15 +17,22 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
-
 import ButtonSubmit from "./button-submit";
+import login from "@/actions/auth/login";
+import { useToast } from "@/components/ui/use-toast";
 
 const formSchema = z.object({
   email: z.string().email({ message: "Not valid email." }).trim(),
-  password: z.string().min(8, { message: "Min 8 characters." }),
+  password: z.string(),
 });
 
 export default function SignInForm() {
+  const queryClient = useQueryClient();
+  const router = useRouter();
+  const { toast } = useToast();
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams?.get("callbackUrl");
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -32,10 +41,29 @@ export default function SignInForm() {
     },
   });
 
+  const mutation = useMutation({
+    mutationFn: login,
+    onSuccess: (res: any) => {
+      if (res.error) {
+        toast({
+          variant: "destructive",
+          title: "Sign in failed.",
+          description: res.error,
+        });
+        return;
+      }
+
+      toast({
+        title: "Sign in.",
+        description: res?.success || "Sign in successfully.",
+      });
+      queryClient.invalidateQueries({ queryKey: ["user"] });
+      router.push("/");
+    },
+  });
+
   function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values);
+    mutation.mutate({ values, callbackUrl });
   }
 
   return (
@@ -59,6 +87,7 @@ export default function SignInForm() {
                     type="email"
                     placeholder="johndoe@gmail.com"
                     {...field}
+                    className="form-disabled"
                   />
                 </FormControl>
                 <FormDescription>
@@ -77,7 +106,12 @@ export default function SignInForm() {
                   <FormMessage className="text-sm text-destructive" />
                 </div>
                 <FormControl>
-                  <Input type="password" placeholder="********" {...field} />
+                  <Input
+                    type="password"
+                    placeholder="********"
+                    {...field}
+                    className="form-disabled"
+                  />
                 </FormControl>
                 <FormDescription>
                   Password you use for your account.
@@ -85,7 +119,9 @@ export default function SignInForm() {
               </FormItem>
             )}
           />
-          <ButtonSubmit>Sign in</ButtonSubmit>
+          <ButtonSubmit isDisabled={mutation.isPending}>
+            {mutation.isPending ? "Loading..." : "Sign in"}
+          </ButtonSubmit>
           <p className="text-center text-sm">
             Have not an account?{" "}
             <Link href="/sign-up" className="text-link underline">

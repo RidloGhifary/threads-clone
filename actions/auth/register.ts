@@ -7,6 +7,7 @@ import { db } from "@/lib/db";
 import { RegisterSchema } from "@/schemas";
 import { getUserByEmail } from "@/data/users";
 import { sendVerificationEmail } from "@/lib/mail";
+import { generateOtpCode } from "@/utils/generate-otp-code";
 
 export default async function register(values: z.infer<typeof RegisterSchema>) {
   const validatedFields = RegisterSchema.safeParse(values);
@@ -22,8 +23,6 @@ export default async function register(values: z.infer<typeof RegisterSchema>) {
     return { error: "User already exist!" };
   }
 
-  const generateOtpCode = Math.floor(100000 + Math.random() * 900000);
-
   const user = await db.user.create({
     data: {
       username,
@@ -38,14 +37,14 @@ export default async function register(values: z.infer<typeof RegisterSchema>) {
 
   await sendVerificationEmail({
     email,
-    otpCode: generateOtpCode.toString(),
+    otpCode: generateOtpCode().toString(),
     userId: user.id,
   });
 
   await db.otpCode.create({
     data: {
       user_id: user.id,
-      otp_code: generateOtpCode.toString(),
+      otp_code: generateOtpCode().toString(),
     },
   });
 

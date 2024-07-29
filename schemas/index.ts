@@ -31,3 +31,8 @@ export const OtpCodeSchema = z.object({
   otpCode: z.string(),
   token: z.string(),
 });
+
+export const LoginSchema = z.object({
+  email: z.string().trim(),
+  password: z.string(),
+});

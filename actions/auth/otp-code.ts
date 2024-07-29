@@ -4,6 +4,7 @@ import { z } from "zod";
 import { db } from "@/lib/db";
 
 import { OtpCodeSchema } from "@/schemas";
+import { getUserById } from "@/data/users";
 
 export default async function validateOtpCode(
   values: z.infer<typeof OtpCodeSchema>,
@@ -15,11 +16,7 @@ export default async function validateOtpCode(
 
   const { otpCode, token } = validatedFields.data;
 
-  const user = await db.user.findFirst({
-    where: {
-      id: token,
-    },
-  });
+  const user = await getUserById(token);
 
   if (!user) {
     return { error: "Invalid OTP code!" };
