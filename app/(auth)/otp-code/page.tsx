@@ -1,5 +1,5 @@
 import OtpCodePage from "@/components/auth/otp-code";
-import AuthHeader from "../../_components/header";
+import AuthHeader from "../_components/header";
 
 export default function OtpCode() {
   return (

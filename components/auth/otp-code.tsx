@@ -3,6 +3,9 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { REGEXP_ONLY_DIGITS } from "input-otp";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useMutation } from "@tanstack/react-query";
 
 import {
   Form,
@@ -19,8 +22,9 @@ import {
   InputOTPSeparator,
   InputOTPSlot,
 } from "@/components/ui/input-otp";
-import { REGEXP_ONLY_DIGITS } from "input-otp";
 import ButtonSubmit from "@/components/auth/button-submit";
+import validateOtpCode from "@/actions/auth/otp-code";
+import { useToast } from "../ui/use-toast";
 
 const FormSchema = z.object({
   otpCode: z.string().min(6, {
@@ -29,6 +33,12 @@ const FormSchema = z.object({
 });
 
 export default function OtpCodePage() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const { toast } = useToast();
+
+  const token = searchParams?.get("token");
+
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -36,8 +46,32 @@ export default function OtpCodePage() {
     },
   });
 
+  const mutation = useMutation({
+    mutationFn: validateOtpCode,
+    onSuccess: (res) => {
+      if (res.error) {
+        toast({
+          variant: "destructive",
+          title: "Account created failed.",
+          description: res.error,
+        });
+        return;
+      }
+
+      toast({
+        title: "Account created.",
+        description: res.success,
+      });
+
+      router.push("/sign-in");
+    },
+  });
+
   function onSubmit(data: z.infer<typeof FormSchema>) {
-    console.log("🚀 ~ onSubmit ~ data:", data);
+    mutation.mutate({
+      otpCode: data.otpCode,
+      token: token?.toString() || "",
+    });
   }
 
   return (
@@ -63,6 +97,7 @@ export default function OtpCodePage() {
                     {...field}
                     pattern={REGEXP_ONLY_DIGITS}
                     autoFocus
+                    className="form-disabled"
                   >
                     <InputOTPGroup>
                       <InputOTPSlot index={0} />
@@ -87,7 +122,9 @@ export default function OtpCodePage() {
             )}
           />
 
-          <ButtonSubmit>Submit</ButtonSubmit>
+          <ButtonSubmit isDisabled={mutation.isPending}>
+            {mutation.isPending ? "Confirming..." : "Confirm"}
+          </ButtonSubmit>
         </form>
       </Form>
     </div>

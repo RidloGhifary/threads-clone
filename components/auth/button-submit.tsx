@@ -11,7 +11,7 @@ export default function ButtonSubmit({
     <Button
       type="submit"
       disabled={isDisabled}
-      className="w-full bg-white text-black hover:bg-white/80 disabled:cursor-not-allowed disabled:opacity-50 md:w-fit"
+      className="form-disabled w-full bg-white text-black hover:bg-white/80 md:w-fit"
     >
       {children}
     </Button>

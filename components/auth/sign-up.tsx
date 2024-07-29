@@ -94,7 +94,7 @@ export default function SignUpForm() {
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="mx-auto space-y-3 disabled:cursor-not-allowed disabled:opacity-50 sm:w-[80%]"
+          className="form-disabled mx-auto space-y-3 sm:w-[80%]"
         >
           <FormField
             control={form.control}
@@ -110,7 +110,7 @@ export default function SignUpForm() {
                     placeholder="johndoe"
                     {...field}
                     disabled={mutation.isPending}
-                    className="disabled:cursor-not-allowed disabled:opacity-50"
+                    className="form-disabled"
                   />
                 </FormControl>
                 <FormDescription>
@@ -134,7 +134,7 @@ export default function SignUpForm() {
                     placeholder="johndoe@gmail.com"
                     {...field}
                     disabled={mutation.isPending}
-                    className="disabled:cursor-not-allowed disabled:opacity-50"
+                    className="form-disabled"
                   />
                 </FormControl>
                 <FormDescription>
@@ -158,7 +158,7 @@ export default function SignUpForm() {
                     placeholder="********"
                     {...field}
                     disabled={mutation.isPending}
-                    className="disabled:cursor-not-allowed disabled:opacity-50"
+                    className="form-disabled"
                   />
                 </FormControl>
                 <FormDescription>

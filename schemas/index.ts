@@ -26,3 +26,8 @@ export const RegisterSchema = z
       message: "Username can only contain letters, numbers and underscores.",
     },
   );
+
+export const OtpCodeSchema = z.object({
+  otpCode: z.string(),
+  token: z.string(),
+});
