@@ -6,6 +6,7 @@ import { HiMenuAlt2, HiOutlineSwitchHorizontal } from "react-icons/hi";
 import { GoHomeFill } from "react-icons/go";
 import { IoSearch } from "react-icons/io5";
 import Link from "next/link";
+import { IoIosArrowBack } from "react-icons/io";
 
 import { usePathname } from "next/navigation";
 import { navigations } from "@/constants";
@@ -26,12 +27,12 @@ export default function LeftSideBar() {
           />
           <span className="mt-1 font-medium">TClone</span>
         </div>
-        <nav className="flex flex-col items-start gap-6">
+        <nav className="flex flex-col items-start gap-2">
           {navigations.map((item: { name: string; href: string }) => (
             <Link
               key={item.name}
               href={item.href}
-              className={`flex cursor-pointer items-center gap-2 rounded-md p-4 ${pathname.startsWith(item.href) ? "text-white" : "text-disabled"} hover:bg-black-stone/50`}
+              className={`flex cursor-pointer items-center gap-2 rounded-md p-4 ${pathname.startsWith(item.href) ? "text-white" : "text-disabled"} hover:bg-black-stone/50 hover:text-white`}
             >
               {item.href === "/" && <GoHomeFill size={25} />}
               {item.href.startsWith("/search") && <IoSearch size={25} />}
@@ -42,8 +43,12 @@ export default function LeftSideBar() {
               <span>{item.name}</span>
             </Link>
           ))}
+          <button className="text-disabled flex cursor-pointer items-center gap-2 rounded-md p-4 hover:bg-black-stone/50 hover:text-white">
+            <IoIosArrowBack size={25} />
+            <span>Back</span>
+          </button>
         </nav>
-        <div className="flex flex-col items-start gap-3">
+        <div className="flex flex-col items-start gap-2">
           <div className="flex cursor-pointer items-center gap-2 rounded-md p-4 text-white/60 hover:bg-black-stone/50">
             <FaPlus size={23} />
             <span>Create</span>

@@ -11,7 +11,7 @@ export default async function Home() {
         <div className="col-span-1 md:col-span-2 lg:col-span-2">
           <MainPage />
         </div>
-        <div className="col-span-1 hidden md:block">RightSideBar</div>
+        <div className="col-span-1 hidden md:block"></div>
       </div>
     </div>
   );
