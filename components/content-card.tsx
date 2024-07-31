@@ -1,6 +1,5 @@
 "use client";
 
-import { BsThreeDots } from "react-icons/bs";
 import { FiMessageCircle } from "react-icons/fi";
 import { IoPaperPlaneOutline } from "react-icons/io5";
 import { FaRegHeart } from "react-icons/fa";

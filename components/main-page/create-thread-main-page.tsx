@@ -1,10 +1,7 @@
 "use client";
 
-import { useSession } from "next-auth/react";
-import Image from "next/image";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -17,29 +14,18 @@ import {
 } from "@/components/ui/form";
 import { toast } from "@/components/ui/use-toast";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-
-const FormSchema = z.object({
-  content: z
-    .string()
-    .min(1, {
-      message: "At least 1 character",
-    })
-    .max(100, {
-      message: "Max 100 characters",
-    }),
-});
+import { createPostSchema } from "@/schema";
+import { z } from "zod";
 
 export default function CreateThreadMainPage() {
-  const { data } = useSession();
-
-  const form = useForm<z.infer<typeof FormSchema>>({
-    resolver: zodResolver(FormSchema),
+  const form = useForm<z.infer<typeof createPostSchema>>({
+    resolver: zodResolver(createPostSchema),
     defaultValues: {
       content: "",
     },
   });
 
-  function onSubmit(data: z.infer<typeof FormSchema>) {
+  function onSubmit(data: z.infer<typeof createPostSchema>) {
     toast({
       title: "You submitted the following values:",
       description: (
@@ -76,6 +62,11 @@ export default function CreateThreadMainPage() {
                   <FormControl>
                     <Input
                       {...field}
+                      style={{
+                        border: "none",
+                        outline: "none",
+                        boxShadow: "none",
+                      }}
                       placeholder="Start a thread..."
                       className="disabled:form-disabled border-none shadow-none outline-none ring-0 focus:border-none focus:outline-none focus:ring-0 active:border-none active:outline-none active:ring-0"
                     />

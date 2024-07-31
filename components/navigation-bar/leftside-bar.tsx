@@ -7,10 +7,11 @@ import { GoHomeFill } from "react-icons/go";
 import { IoSearch } from "react-icons/io5";
 import Link from "next/link";
 import { IoIosArrowBack } from "react-icons/io";
-
 import { usePathname } from "next/navigation";
+
 import { navigations } from "@/constants";
 import MenuButton from "../navigation-buttons/menu-bar";
+import CreatePostBar from "./create-post-bar";
 
 export default function LeftSideBar() {
   const pathname = usePathname();
@@ -51,10 +52,7 @@ export default function LeftSideBar() {
           </button>
         </nav>
         <div className="flex flex-col items-start gap-2">
-          <div className="dark:text-disabled text-disabled-dark flex cursor-pointer items-center gap-2 rounded-md p-4 hover:bg-black-stone/50">
-            <FaPlus size={23} />
-            <span>Create</span>
-          </div>
+          <CreatePostBar />
           <MenuButton />
         </div>
       </div>
@@ -73,12 +71,7 @@ export default function LeftSideBar() {
           >
             <HiOutlineSwitchHorizontal size={25} />
           </Link>
-          <Link
-            href="/"
-            className={`text-disabled cursor-pointer rounded-md p-4 hover:bg-black-stone/50`}
-          >
-            <FaPlus size={23} />
-          </Link>
+          <CreatePostBar />
           <Link
             href="/search"
             className={`cursor-pointer rounded-md p-4 ${pathname.startsWith("/search") ? "text-white" : "text-disabled"} hover:bg-black-stone/50`}
