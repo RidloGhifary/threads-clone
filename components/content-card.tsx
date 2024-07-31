@@ -9,6 +9,7 @@ import { TiPlus } from "react-icons/ti";
 
 import { UserHover } from "./user-hover";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import ContentAction from "./content-action";
 
 export default function ContentCard() {
   return (
@@ -41,8 +42,8 @@ export default function ContentCard() {
             />
             <span className="text-sm text-gray-500">12h</span>
           </Link>
-          <div className="cursor-pointer rounded-full text-gray-500 hover:bg-black-stone/50">
-            <BsThreeDots size={15} />
+          <div>
+            <ContentAction />
           </div>
         </div>
         <p className="mb-3 text-xs text-gray-500">@ridloghfryy</p>
