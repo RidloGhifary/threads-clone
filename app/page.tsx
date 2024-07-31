@@ -1,16 +1,19 @@
-import { auth } from "@/auth";
-import LogoutButton from "@/components/auth/logout0button";
-import { Button } from "@/components/ui/button";
+import LeftSideBar from "@/components/navigation-bar/leftside-bar";
 
 export default async function Home() {
-  const session = await auth();
-
   return (
-    <div>
-      <h1>Hello {session ? session.user?.name : "World"}</h1>
-      <Button>
-        <LogoutButton>Sign Out</LogoutButton>
-      </Button>
+    <div className="min-h-screen bg-main-black text-white">
+      <div className="mx-auto grid max-w-screen-2xl md:grid-cols-3 lg:grid-cols-4">
+        <div className="order-last col-span-1 md:order-first">
+          <LeftSideBar />
+        </div>
+        <div className="col-span-1 bg-black-stone md:col-span-2 lg:col-span-2">
+          Main Page
+        </div>
+        <div className="col-span-1 hidden bg-black-stone md:block">
+          RightSideBar
+        </div>
+      </div>
     </div>
   );
 }
