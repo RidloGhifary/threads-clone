@@ -24,7 +24,7 @@ export default async function RootLayout({
             <main className="bg-main-black text-white">
               <ThemeProvider
                 attribute="class"
-                defaultTheme="system"
+                defaultTheme="dark"
                 enableSystem
                 disableTransitionOnChange
               >
