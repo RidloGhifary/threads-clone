@@ -1,28 +1,30 @@
-"use client";
-
+import { SessionProvider } from "next-auth/react";
 import { Inter } from "next/font/google";
 import "./globals.css";
 
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { auth } from "@/auth";
 import { Toaster } from "@/components/ui/toaster";
+import ClientOnlyWrapper from "./clientOnlyWrapper";
 
 const inter = Inter({ subsets: ["latin"] });
 
-const queryClient = new QueryClient();
-
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await auth();
+
   return (
-    <html lang="en">
-      <body className={inter.className}>
-        <QueryClientProvider client={queryClient}>
-          <main className="bg-main-black text-white">{children}</main>
+    <SessionProvider session={session}>
+      <html lang="en">
+        <body className={inter.className}>
+          <ClientOnlyWrapper>
+            <main className="bg-main-black text-white">{children}</main>
+          </ClientOnlyWrapper>
           <Toaster />
-        </QueryClientProvider>
-      </body>
-    </html>
+        </body>
+      </html>
+    </SessionProvider>
   );
 }

@@ -15,7 +15,7 @@ export default function LeftSideBar() {
 
   return (
     <>
-      <div className="hidden min-h-screen w-full flex-col items-start justify-between md:flex">
+      <div className="sticky top-0 hidden min-h-screen w-full flex-col items-start justify-between md:flex">
         <div className="flex cursor-pointer items-start gap-2 p-4">
           <Image
             src="/logo.webp"
@@ -29,6 +29,7 @@ export default function LeftSideBar() {
         <nav className="flex flex-col items-start gap-6">
           {navigations.map((item: { name: string; href: string }) => (
             <Link
+              key={item.name}
               href={item.href}
               className={`flex cursor-pointer items-center gap-2 rounded-md p-4 ${pathname.startsWith(item.href) ? "text-white" : "text-disabled"} hover:bg-black-stone/50`}
             >
