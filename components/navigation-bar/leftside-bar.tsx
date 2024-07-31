@@ -10,6 +10,7 @@ import { IoIosArrowBack } from "react-icons/io";
 
 import { usePathname } from "next/navigation";
 import { navigations } from "@/constants";
+import MenuButton from "../navigation-buttons/menu-bar";
 
 export default function LeftSideBar() {
   const pathname = usePathname();
@@ -53,10 +54,7 @@ export default function LeftSideBar() {
             <FaPlus size={23} />
             <span>Create</span>
           </div>
-          <div className="flex cursor-pointer items-center gap-2 rounded-md p-4 text-white/60 hover:bg-black-stone/50">
-            <HiMenuAlt2 size={25} />
-            <span>Menu</span>
-          </div>
+          <MenuButton />
         </div>
       </div>
 

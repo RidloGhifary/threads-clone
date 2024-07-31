@@ -5,6 +5,7 @@ import "./globals.css";
 import { auth } from "@/auth";
 import { Toaster } from "@/components/ui/toaster";
 import Providers from "./providers";
+import { ThemeProvider } from "@/components/theme-provider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -20,7 +21,16 @@ export default async function RootLayout({
       <html lang="en">
         <body className={inter.className}>
           <Providers>
-            <main className="bg-main-black text-white">{children}</main>
+            <main className="bg-main-black text-white">
+              <ThemeProvider
+                attribute="class"
+                defaultTheme="system"
+                enableSystem
+                disableTransitionOnChange
+              >
+                {children}
+              </ThemeProvider>
+            </main>
           </Providers>
           <Toaster />
         </body>
