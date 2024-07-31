@@ -22,6 +22,7 @@ const config = {
         "main-black": "#0a0a0a",
         "black-stone": "#181818",
         disabled: "rgba(255,255,255,0.5)",
+        "disabled-dark": "rgba(0,0,0,0.5)",
         link: "#3b82f6",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",

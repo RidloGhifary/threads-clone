@@ -21,7 +21,7 @@ export default async function RootLayout({
       <html lang="en">
         <body className={inter.className}>
           <Providers>
-            <main className="bg-main-black text-white">
+            <main className="dark:bg-main-black dark:text-white">
               <ThemeProvider
                 attribute="class"
                 defaultTheme="dark"

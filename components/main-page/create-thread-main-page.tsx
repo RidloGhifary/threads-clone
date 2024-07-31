@@ -77,7 +77,7 @@ export default function CreateThreadMainPage() {
                     <Input
                       {...field}
                       placeholder="Start a thread..."
-                      className="disabled:form-disabled border-none outline-none"
+                      className="disabled:form-disabled border-none shadow-none outline-none ring-0 focus:border-none focus:outline-none focus:ring-0 active:border-none active:outline-none active:ring-0"
                     />
                   </FormControl>
                   <FormMessage />
@@ -89,7 +89,7 @@ export default function CreateThreadMainPage() {
                 form.formState.isSubmitting || form.watch("content") === ""
               }
               type="submit"
-              className="disabled:form-disabled rounded-full bg-white px-6 text-black hover:bg-white/50"
+              className="disabled:form-disabled rounded-full bg-main-black px-6 text-white hover:bg-black/50 dark:bg-white dark:text-main-black dark:hover:bg-white/50"
             >
               Post
             </Button>

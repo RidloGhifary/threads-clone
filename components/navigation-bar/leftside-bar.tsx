@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { FaPlus, FaUser } from "react-icons/fa";
-import { HiMenuAlt2, HiOutlineSwitchHorizontal } from "react-icons/hi";
+import { HiOutlineSwitchHorizontal } from "react-icons/hi";
 import { GoHomeFill } from "react-icons/go";
 import { IoSearch } from "react-icons/io5";
 import Link from "next/link";
@@ -20,11 +20,12 @@ export default function LeftSideBar() {
       <div className="sticky top-0 hidden min-h-screen w-full flex-col items-start justify-between md:flex">
         <div className="flex cursor-pointer items-start gap-2 p-4">
           <Image
-            src="/logo.webp"
+            src="/logo-color.png"
             alt="thread-clone"
             width={150}
             height={150}
-            className="h-8 w-8"
+            priority
+            className="h-8 w-8 object-contain"
           />
           <span className="mt-1 font-medium">TClone</span>
         </div>
@@ -33,7 +34,7 @@ export default function LeftSideBar() {
             <Link
               key={item.name}
               href={item.href}
-              className={`flex cursor-pointer items-center gap-2 rounded-md p-4 ${pathname.startsWith(item.href) ? "text-white" : "text-disabled"} hover:bg-black-stone/50 hover:text-white`}
+              className={`flex cursor-pointer items-center gap-2 rounded-md p-4 ${pathname.startsWith(item.href) ? "text-black dark:text-white" : "dark:text-disabled text-disabled-dark"} hover:bg-black-stone/50 hover:text-white`}
             >
               {item.href === "/" && <GoHomeFill size={25} />}
               {item.href.startsWith("/search") && <IoSearch size={25} />}
@@ -44,13 +45,13 @@ export default function LeftSideBar() {
               <span>{item.name}</span>
             </Link>
           ))}
-          <button className="text-disabled flex cursor-pointer items-center gap-2 rounded-md p-4 hover:bg-black-stone/50 hover:text-white">
+          <button className="dark:text-disabled text-disabled-dark flex cursor-pointer items-center gap-2 rounded-md p-4 hover:bg-black-stone/50 hover:text-white">
             <IoIosArrowBack size={25} />
             <span>Back</span>
           </button>
         </nav>
         <div className="flex flex-col items-start gap-2">
-          <div className="flex cursor-pointer items-center gap-2 rounded-md p-4 text-white/60 hover:bg-black-stone/50">
+          <div className="dark:text-disabled text-disabled-dark flex cursor-pointer items-center gap-2 rounded-md p-4 hover:bg-black-stone/50">
             <FaPlus size={23} />
             <span>Create</span>
           </div>
@@ -58,7 +59,7 @@ export default function LeftSideBar() {
         </div>
       </div>
 
-      <nav className="absolute bottom-0 w-full bg-main-black md:hidden">
+      <nav className="absolute bottom-0 w-full dark:bg-main-black md:hidden">
         <div className="flex items-center justify-center gap-6">
           <Link
             href="/"
