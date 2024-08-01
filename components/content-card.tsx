@@ -5,6 +5,7 @@ import { IoPaperPlaneOutline } from "react-icons/io5";
 import { FaRegHeart } from "react-icons/fa";
 import Link from "next/link";
 import { TiPlus } from "react-icons/ti";
+import moment from "moment";
 
 import { UserHover } from "./user-hover";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -48,7 +49,12 @@ export default function ContentCard({ post }: { post: PostFiltered }) {
               bio={post?.user?.bio || "Bro got no bio :("}
               followers={post?.user?._count?.followers}
             />
-            <span className="text-sm text-gray-500">12h</span>
+            <span className="text-sm text-gray-500">
+              {moment(post?.created_at).startOf("second").fromNow()}
+            </span>
+            <sub className="text-xs text-gray-500">
+              {post?.is_edited && " (edited)"}
+            </sub>
           </Link>
           <div>
             <ContentAction post={post} />
