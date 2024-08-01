@@ -9,6 +9,11 @@ import { ThemeProvider } from "@/components/theme-provider";
 
 const inter = Inter({ subsets: ["latin"] });
 
+export const metadata = {
+  title: "Thread clone",
+  description: "Thread clone built for learning purposes",
+};
+
 export default async function RootLayout({
   children,
 }: Readonly<{
