@@ -18,10 +18,12 @@ import { PostFiltered } from "@/types";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { toast } from "./ui/use-toast";
 import { useState } from "react";
+import useDeletePost from "@/hooks/use-delete-post";
 
 export default function ContentAction({ post }: { post: PostFiltered }) {
   const user = useCurrentUser();
   const router = useRouter();
+  const { mutate, isPending } = useDeletePost();
 
   const [isCopied, setIsCopied] = useState<boolean>(false);
 
@@ -69,9 +71,14 @@ export default function ContentAction({ post }: { post: PostFiltered }) {
           <span>{isCopied ? "Copied" : "Copy link"}</span>
         </DropdownMenuItem>
         {user?.id === post?.user?.id && (
-          <DropdownMenuItem className="flex cursor-pointer items-center gap-3 bg-destructive/30 text-destructive">
+          <DropdownMenuItem
+            onClick={() =>
+              mutate({ user_id: user?.id as string, post_id: post?.id })
+            }
+            className="flex cursor-pointer items-center gap-3 bg-destructive/30 text-destructive"
+          >
             <LuTrash size={15} />
-            <span>Delete</span>
+            <span>{isPending ? "Deleting..." : "Delete"}</span>
           </DropdownMenuItem>
         )}
       </DropdownMenuContent>
