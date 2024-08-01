@@ -1,7 +1,12 @@
+"use client";
+
 import { BsThreeDots } from "react-icons/bs";
 import { GoBookmark } from "react-icons/go";
 import { LuUser } from "react-icons/lu";
 import { ImLink } from "react-icons/im";
+import { LuTrash } from "react-icons/lu";
+import { useRouter } from "next/navigation";
+import { IoCheckmark } from "react-icons/io5";
 
 import {
   DropdownMenu,
@@ -9,8 +14,32 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { PostFiltered } from "@/types";
+import { useCurrentUser } from "@/hooks/use-current-user";
+import { toast } from "./ui/use-toast";
+import { useState } from "react";
 
-export default function ContentAction() {
+export default function ContentAction({ post }: { post: PostFiltered }) {
+  const user = useCurrentUser();
+  const router = useRouter();
+
+  const [isCopied, setIsCopied] = useState<boolean>(false);
+
+  const handleCopyLink = () => {
+    const BASE_URL = process.env.NEXT_PUBLIC_APP_URL!;
+    const link = `${BASE_URL}/@${post?.user?.nickname}/post/${post?.id}`;
+    navigator.clipboard.writeText(link).then(() => {
+      setIsCopied(true);
+      toast({
+        variant: "default",
+        title: "Copied",
+        description: "Link copied to clipboard",
+      });
+    });
+
+    setTimeout(() => setIsCopied(false), 3000);
+  };
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -23,14 +52,28 @@ export default function ContentAction() {
           <GoBookmark size={18} />
           <span>Save</span>
         </DropdownMenuItem>
-        <DropdownMenuItem className="flex cursor-pointer items-center gap-3">
+        <DropdownMenuItem
+          className="flex cursor-pointer items-center gap-3"
+          onClick={() =>
+            router.push(`/@${post?.user?.nickname}/post/${post?.id}`)
+          }
+        >
           <LuUser size={18} />
           <span>Profile</span>
         </DropdownMenuItem>
-        <DropdownMenuItem className="flex cursor-pointer items-center gap-3">
-          <ImLink size={15} />
-          <span>Copy link</span>
+        <DropdownMenuItem
+          className="flex cursor-pointer items-center gap-3"
+          onClick={handleCopyLink}
+        >
+          {isCopied ? <IoCheckmark size={15} /> : <ImLink size={15} />}
+          <span>{isCopied ? "Copied" : "Copy link"}</span>
         </DropdownMenuItem>
+        {user?.id === post?.user?.id && (
+          <DropdownMenuItem className="flex cursor-pointer items-center gap-3 bg-destructive/30 text-destructive">
+            <LuTrash size={15} />
+            <span>Delete</span>
+          </DropdownMenuItem>
+        )}
       </DropdownMenuContent>
     </DropdownMenu>
   );

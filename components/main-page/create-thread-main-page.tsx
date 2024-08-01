@@ -34,11 +34,11 @@ export default function CreateThreadMainPage() {
       <div>
         <Avatar>
           <AvatarImage
-            src="https://github.com/shadcn.png"
+            src={user?.image as string}
             alt="@shadcn"
             className="h-10 w-10"
           />
-          <AvatarFallback>R</AvatarFallback>
+          <AvatarFallback>{user?.name?.charAt(0)}</AvatarFallback>
         </Avatar>
       </div>
       <div className="flex w-full items-center">

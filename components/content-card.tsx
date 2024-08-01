@@ -9,62 +9,69 @@ import { TiPlus } from "react-icons/ti";
 import { UserHover } from "./user-hover";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import ContentAction from "./content-action";
+import { PostFiltered } from "@/types";
+import { useCurrentUser } from "@/hooks/use-current-user";
 
-export default function ContentCard() {
+export default function ContentCard({ post }: { post: PostFiltered }) {
+  const user = useCurrentUser();
+
   return (
     <div className="flex w-full items-start gap-2">
       <div className="relative min-w-fit">
         <Avatar>
           <AvatarImage
-            src="https://github.com/shadcn.png"
+            src={post?.user?.profile_picture as string}
             alt={"avatar"}
             className="h-10 w-10"
           />
-          <AvatarFallback>R</AvatarFallback>
+          <AvatarFallback>{post?.user?.username?.charAt(0)}</AvatarFallback>
         </Avatar>
-        <div className="absolute bottom-0 right-0 flex h-5 w-5 cursor-pointer items-center justify-center rounded-full border border-black bg-white text-black hover:scale-105">
-          <TiPlus size={15} />
-        </div>
+        {user?.id !== post?.user?.id && (
+          <div className="absolute bottom-0 right-0 flex h-5 w-5 cursor-pointer items-center justify-center rounded-full border border-black bg-white text-black hover:scale-105">
+            <TiPlus size={15} />
+          </div>
+        )}
       </div>
-      <div className="">
+      <div className="w-full">
         <div className="flex items-center justify-between">
           <Link
-            href={"/profile/@ridloghfryy"}
+            href={`/profile/@${post?.user?.nickname}`}
             className="flex w-full items-center gap-2"
           >
             <UserHover
-              username="Ridloghfryy"
-              image="https://github.com/shadcn.png"
-              nickname="@ridloghfryy"
-              bio="I am a developer, and I love to build things."
-              followers={100}
+              username={post?.user?.nickname}
+              image={
+                (post?.user?.profile_picture as string) ||
+                post?.user?.username?.charAt(0)
+              }
+              nickname={`@${post?.user?.nickname}`}
+              bio={post?.user?.bio || "Bro got no bio :("}
+              followers={post?.user?._count?.followers}
             />
             <span className="text-sm text-gray-500">12h</span>
           </Link>
           <div>
-            <ContentAction />
+            <ContentAction post={post} />
           </div>
         </div>
-        <p className="mb-3 text-xs text-gray-500">@ridloghfryy</p>
-        <Link href={"/@ridloghfryy/post/JHAsd78sa7d"}>
-          <span className="line-clamp-5">
-            Lorem ipsum dolor sit, amet consectetur adipisicing elit. Dolorem
-            dolores eveniet nemo voluptate rerum! Vel nulla ducimus
-            reprehenderit nisi maxime!
-          </span>
+        <p className="mb-3 text-xs text-gray-500">@{post?.user?.nickname}</p>
+        <Link href={`/@${post?.user?.nickname}/post/${post?.id}`}>
+          <span className="line-clamp-5">{post?.content}</span>
         </Link>
         <div className="-ml-3 mt-3 flex items-center gap-5">
           <div className="flex cursor-pointer items-center gap-1 rounded-full p-3 hover:bg-black-stone/50">
             <FaRegHeart size={20} />
-            <span className="text-sm text-gray-500">46</span>
+            <span className="text-sm text-gray-500">{post?._count?.likes}</span>
           </div>
           <div className="flex cursor-pointer items-center gap-1 rounded-full p-3 hover:bg-black-stone/50">
             <FiMessageCircle size={20} />
-            <span className="text-sm text-gray-500">18</span>
+            <span className="text-sm text-gray-500">
+              {post?._count?.comments + post?._count?.replies}
+            </span>
           </div>
           <div className="flex cursor-pointer items-center gap-1 rounded-full p-3 hover:bg-black-stone/50">
             <IoPaperPlaneOutline size={20} />
-            <span className="text-sm text-gray-500">5</span>
+            <span className="text-sm text-gray-500">10</span>
           </div>
         </div>
       </div>
