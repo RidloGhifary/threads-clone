@@ -73,7 +73,7 @@ model Following {
 model Post {
   id         String         @id @default(cuid())
   content    String
-  is_edited  Boolean
+  is_edited  Boolean        @default(false)
   user_id    String
   user       User           @relation(fields: [user_id], references: [id])
   created_at DateTime       @default(now())

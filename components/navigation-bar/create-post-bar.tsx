@@ -1,4 +1,8 @@
 import { FaPlus } from "react-icons/fa";
+import { z } from "zod";
+import { useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -9,15 +13,15 @@ import {
 } from "@/components/ui/dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Textarea } from "@/components/ui/textarea";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
-import { toast } from "@/components/ui/use-toast";
-import { createPostSchema } from "@/schema";
-import { z } from "zod";
-import { useState } from "react";
+import { createPostSchema } from "@/schemas";
+import { useCurrentUser } from "@/hooks/use-current-user";
+import useCreatePost from "@/hooks/create-post";
 
 export default function CreatePostBar() {
+  const user = useCurrentUser();
+  const { mutate, isPending, isSuccess } = useCreatePost();
+
   const [dialogOpen, setDialogOpen] = useState(false);
 
   const form = useForm<z.infer<typeof createPostSchema>>({
@@ -28,21 +32,17 @@ export default function CreatePostBar() {
   });
 
   function onSubmit(data: z.infer<typeof createPostSchema>) {
-    toast({
-      title: "You submitted the following values:",
-      description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        </pre>
-      ),
-    });
-    setDialogOpen(false);
+    mutate({ values: data, user_id: user?.id as string });
+    if (isSuccess) {
+      form.reset();
+      setDialogOpen(false);
+    }
   }
 
   return (
     <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
       <DialogTrigger asChild>
-        <div className="dark:text-disabled text-disabled-dark flex cursor-pointer items-center gap-2 rounded-md p-4 hover:bg-black-stone/50">
+        <div className="flex cursor-pointer items-center gap-2 rounded-md p-4 text-disabled-dark hover:bg-black-stone/50 dark:text-disabled">
           <FaPlus size={23} />
           <span className="hidden md:block">Create</span>
         </div>
@@ -77,7 +77,8 @@ export default function CreatePostBar() {
                               outline: "none",
                               boxShadow: "none",
                             }}
-                            className="h-[90px] w-full resize-none border-0 p-0 outline-none ring-0 focus:border-0 focus:outline-none focus:ring-0"
+                            disabled={isPending}
+                            className="disabled:form-disabled h-[90px] w-full resize-none border-0 p-0 outline-none ring-0 focus:border-0 focus:outline-none focus:ring-0"
                             rows={6}
                           />
                         </FormControl>
@@ -85,7 +86,15 @@ export default function CreatePostBar() {
                     )}
                   />
                   <DialogFooter>
-                    <Button type="submit" className="rounded-full">
+                    <Button
+                      type="submit"
+                      className="disabled:form-disabled rounded-full"
+                      disabled={
+                        isPending ||
+                        form.formState.isSubmitting ||
+                        form.watch("content") === ""
+                      }
+                    >
                       Post
                     </Button>
                   </DialogFooter>

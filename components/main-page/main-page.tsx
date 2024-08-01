@@ -4,7 +4,7 @@ import ContentCard from "../content-card";
 import CreateThreadMainPage from "./create-thread-main-page";
 import { Separator } from "@/components/ui/separator";
 
-const tags = Array.from({ length: 50 }).map(
+const tags = Array.from({ length: 20 }).map(
   (_, i, a) => `v1.2.0-beta.${a.length - i}`,
 );
 

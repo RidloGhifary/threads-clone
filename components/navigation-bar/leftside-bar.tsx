@@ -35,7 +35,7 @@ export default function LeftSideBar() {
             <Link
               key={item.name}
               href={item.href}
-              className={`flex cursor-pointer items-center gap-2 rounded-md p-4 ${pathname.startsWith(item.href) ? "text-black dark:text-white" : "dark:text-disabled text-disabled-dark"} hover:bg-black-stone/50 hover:text-white`}
+              className={`flex cursor-pointer items-center gap-2 rounded-md p-4 ${pathname.startsWith(item.href) ? "text-black dark:text-white" : "text-disabled-dark dark:text-disabled"} hover:bg-black-stone/50 hover:text-white`}
             >
               {item.href === "/" && <GoHomeFill size={25} />}
               {item.href.startsWith("/search") && <IoSearch size={25} />}
@@ -46,7 +46,7 @@ export default function LeftSideBar() {
               <span>{item.name}</span>
             </Link>
           ))}
-          <button className="dark:text-disabled text-disabled-dark flex cursor-pointer items-center gap-2 rounded-md p-4 hover:bg-black-stone/50 hover:text-white">
+          <button className="flex cursor-pointer items-center gap-2 rounded-md p-4 text-disabled-dark hover:bg-black-stone/50 hover:text-white dark:text-disabled">
             <IoIosArrowBack size={25} />
             <span>Back</span>
           </button>
@@ -67,7 +67,7 @@ export default function LeftSideBar() {
           </Link>
           <Link
             href="/"
-            className={`text-disabled cursor-pointer rounded-md p-4 hover:bg-black-stone/50`}
+            className={`cursor-pointer rounded-md p-4 text-disabled hover:bg-black-stone/50`}
           >
             <HiOutlineSwitchHorizontal size={25} />
           </Link>

@@ -2,22 +2,21 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { z } from "zod";
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormMessage,
-} from "@/components/ui/form";
-import { toast } from "@/components/ui/use-toast";
+import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { createPostSchema } from "@/schema";
-import { z } from "zod";
+import { createPostSchema } from "@/schemas";
+import createPost from "@/actions/posts/create-post";
+import { useCurrentUser } from "@/hooks/use-current-user";
+import useCreatePost from "@/hooks/create-post";
 
 export default function CreateThreadMainPage() {
+  const user = useCurrentUser();
+  const { mutate, isPending } = useCreatePost();
+
   const form = useForm<z.infer<typeof createPostSchema>>({
     resolver: zodResolver(createPostSchema),
     defaultValues: {
@@ -26,14 +25,8 @@ export default function CreateThreadMainPage() {
   });
 
   function onSubmit(data: z.infer<typeof createPostSchema>) {
-    toast({
-      title: "You submitted the following values:",
-      description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        </pre>
-      ),
-    });
+    mutate({ values: data, user_id: user?.id as string });
+    form.reset();
   }
 
   return (
@@ -67,17 +60,19 @@ export default function CreateThreadMainPage() {
                         outline: "none",
                         boxShadow: "none",
                       }}
+                      disabled={isPending}
                       placeholder="Start a thread..."
                       className="disabled:form-disabled border-none shadow-none outline-none ring-0 focus:border-none focus:outline-none focus:ring-0 active:border-none active:outline-none active:ring-0"
                     />
                   </FormControl>
-                  <FormMessage />
                 </FormItem>
               )}
             />
             <Button
               disabled={
-                form.formState.isSubmitting || form.watch("content") === ""
+                isPending ||
+                form.formState.isSubmitting ||
+                form.watch("content") === ""
               }
               type="submit"
               className="disabled:form-disabled rounded-full bg-main-black px-6 text-white hover:bg-black/50 dark:bg-white dark:text-main-black dark:hover:bg-white/50"
