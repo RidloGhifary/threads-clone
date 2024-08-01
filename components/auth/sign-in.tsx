@@ -44,21 +44,27 @@ export default function SignInForm() {
   const mutation = useMutation({
     mutationFn: login,
     onSuccess: (res: any) => {
-      if (res.error) {
+      if (res && res.error) {
         toast({
           variant: "destructive",
           title: "Sign in failed.",
-          description: res.error,
+          description: res?.error || "Something went wrong",
         });
-        return;
       }
 
       toast({
         title: "Sign in.",
-        description: res?.success || "Sign in successfully.",
+        description: "Sign in successfully.",
       });
       queryClient.invalidateQueries({ queryKey: ["user"] });
       router.push("/");
+    },
+    onError: (err) => {
+      toast({
+        variant: "destructive",
+        title: "Sign in failed.",
+        description: "Something went wrong",
+      });
     },
   });
 
