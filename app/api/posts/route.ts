@@ -17,6 +17,7 @@ export async function GET() {
             _count: { select: { followers: true } },
           },
         },
+        likes: true,
         _count: {
           select: { likes: true, comments: true, replies: true },
         },

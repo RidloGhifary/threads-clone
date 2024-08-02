@@ -93,6 +93,7 @@ model Like {
   user    User   @relation("PostLikes", fields: [user_id], references: [id])
   post    Post   @relation("PostLikes", fields: [post_id], references: [id])
 
+  @@unique([user_id, post_id]) // This ensures a unique combination of user_id and post_id
   @@index([user_id])
   @@index([post_id])
   @@map("likes")

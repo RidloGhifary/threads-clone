@@ -10,11 +10,14 @@ import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { createPostSchema } from "@/schemas";
 import createPost from "@/actions/posts/create-post";
-import { useCurrentUser } from "@/hooks/use-current-user";
 import useCreatePost from "@/hooks/create-post";
+import { UserSessionProps } from "@/types";
 
-export default function CreateThreadMainPage() {
-  const user = useCurrentUser();
+export default function CreateThreadMainPage({
+  user,
+}: {
+  user?: UserSessionProps;
+}) {
   const { mutate, isPending } = useCreatePost();
 
   const form = useForm<z.infer<typeof createPostSchema>>({

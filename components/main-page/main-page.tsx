@@ -1,6 +1,6 @@
 "use client";
 
-import { useQuery, useInfiniteQuery } from "@tanstack/react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import { useInView } from "react-intersection-observer";
 import { useEffect } from "react";
 
@@ -8,30 +8,23 @@ import { fetchPosts } from "@/actions/posts/get-posts";
 import ContentCard from "../content-card";
 import CreateThreadMainPage from "./create-thread-main-page";
 import { Separator } from "@/components/ui/separator";
-import { PostFiltered } from "@/types";
+import { PostFiltered, UserSessionProps } from "@/types";
 import { PostSkeleton } from "@/skeletons";
 import ErrorBanner from "../error-banner";
 
-export default function MainPage() {
+export default function MainPage({ user }: { user?: UserSessionProps }) {
   const { ref, inView } = useInView();
-  const {
-    data,
-    error,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-    status,
-    isLoading,
-  } = useInfiniteQuery({
-    queryKey: ["posts"],
-    queryFn: fetchPosts,
-    initialPageParam: 0,
-    getNextPageParam: (lastPage, allPages) => {
-      const nextPage =
-        lastPage.length === 20 ? allPages.length * 20 : undefined;
-      return nextPage;
-    },
-  });
+  const { data, error, fetchNextPage, hasNextPage, isLoading } =
+    useInfiniteQuery({
+      queryKey: ["posts"],
+      queryFn: fetchPosts,
+      initialPageParam: 0,
+      getNextPageParam: (lastPage, allPages) => {
+        const nextPage =
+          lastPage.length === 20 ? allPages.length * 20 : undefined;
+        return nextPage;
+      },
+    });
 
   useEffect(() => {
     if (inView && hasNextPage) {
@@ -41,7 +34,7 @@ export default function MainPage() {
 
   return (
     <div className="min-h-screen p-4">
-      <CreateThreadMainPage />
+      <CreateThreadMainPage user={user} />
       <Separator className="separator-color my-4 bg-gray-700" />
       <div className="space-y-5">
         {isLoading ? (
@@ -54,7 +47,7 @@ export default function MainPage() {
               if (page.length == index + 1) {
                 return (
                   <div key={post.id} ref={ref}>
-                    <ContentCard post={post} />
+                    <ContentCard post={post} user={user} />
                     {page.length - 1 !== page.indexOf(post) && (
                       <Separator className="separator-color mx-auto my-4 w-2/3 bg-gray-700" />
                     )}
